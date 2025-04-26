@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学数学题库 - 智能学习系统</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .auth-buttons button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: white;
+            color: var(--primary-color);
+        }
+        
+        .main-content {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-right: 20px;
+        }
+        
+        .content-area {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .filter-section {
+            background: var(--light-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        select, input, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .question {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .question-meta {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .grade {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .type {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .difficulty {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .easy {
+            background: #d5f5e3;
+            color: #27ae60;
+        }
+        
+        .medium {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+        
+        .hard {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+        
+        .question-content {
+            margin-bottom: 15px;
+        }
+        
+        .answer-section {
+            margin-top: 15px;
+        }
+        
+        .user-answer {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .submit-answer {
+            background-color: var(--success-color);
+        }
+        
+        .submit-answer:hover {
+            background-color: #27ae60;
+        }
+        
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d5f5e3;
+            color: #27ae60;
+            display: block;
+        }
+        
+        .incorrect {
+            background-color: #fadbd8;
+            color: #e74c3c;
+            display: block;
+        }
+        
+        .correct-answer {
+            font-weight: bold;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination a {
+            padding: 8px 16px;
+            margin: 0 4px;
+            background: var(--light-color);
+            color: var(--dark-color);
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        .pagination a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .close-modal {
+            float: right;
+            cursor: pointer;
+        }
+        
+        .stats-section {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+        }
+        
+        .stats-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .wrong-questions-list {
+            margin-top: 20px;
+        }
+        
+        .wrong-question {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .wrong-question:hover {
+            background-color: #f9f9f9;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">小学数学题库</div>
+            <div class="auth-buttons">
+                <button id="login-btn">登录</button>
+                <button id="register-btn">注册</button>
+                <button id="logout-btn" style="display: none;">退出</button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container main-content">
+        <aside class="sidebar">
+            <h3>用户中心</h3>
+            <div id="user-info" style="display: none;">
+                <p>欢迎, <span id="username-display"></span></p>
+            </div>
+            
+            <div class="stats-section">
+                <h4 class="stats-title">学习统计</h4>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-questions">0</div>
+                        <div class="stat-label">总做题数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="correct-answers">0</div>
+                        <div class="stat-label">正确数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracy-rate">0%</div>
+                        <div class="stat-label">正确率</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="wrong-questions-list">
+                <h4>我的错题</h4>
+                <div id="wrong-questions-container"></div>
+            </div>
+        </aside>
+        
+        <main class="content-area">
+            <div class="filter-section">
+                <h3>筛选题目</h3>
+                <form id="filter-form">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="grade">年级：</label>
+                            <select id="grade" name="grade">
+                                <option value="">全部</option>
+                                <option value="1">一年级</option>
+                                <option value="2">二年级</option>
+                                <option value="3">三年级</option>
+                                <option value="4">四年级</option>
+                                <option value="5">五年级</option>
+                                <option value="6">六年级</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="type">题型：</label>
+                            <select id="type" name="type">
+                                <option value="">全部</option>
+                                <option value="choice">选择题</option>
+                                <option value="fill">填空题</option>
+                                <option value="calculation">计算题</option>
+                                <option value="word">应用题</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="difficulty">难度：</label>
+                            <select id="difficulty" name="difficulty">
+                                <option value="">全部</option>
+                                <option value="easy">简单</option>
+                                <option value="medium">中等</option>
+                                <option value="hard">困难</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit">筛选题目</button>
+                </form>
+            </div>
+            
+            <div id="question-list">
+                <!-- 题目列表将通过JavaScript动态加载 -->
+            </div>
+            
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <a href="#">&raquo;</a>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 登录模态框 -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="modal-title">用户登录</h3>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">用户名</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">密码</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit">登录</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 注册模态框 -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="modal-title">用户注册</h3>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-username">用户名</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">密码</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm-password">确认密码</label>
+                    <input type="password" id="register-confirm-password" required>
+                </div>
+                <button type="submit">注册</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 数据库模拟（实际应用中应使用后端数据库）
+        const database = {
+            users: [
+                { id: 1, username: 'student1', password: '123456' },
+                { id: 2, username: 'student2', password: '123456' }
+            ],
+            
+            questions: [
+                {
+                    id: 1,
+                    grade: "一年级",
+                    type: "calculation",
+                    difficulty: "easy",
+                    content: "3 + 5 = ?",
+                    answer: "8",
+                    explanation: "3加5等于8"
+                },
+                {
+                    id: 2,
+                    grade: "二年级",
+                    type: "word",
+                    difficulty: "medium",
+                    content: "小明有5个苹果，小红比小明多3个苹果，小红有多少个苹果？",
+                    answer: "8个",
+                    explanation: "小红的苹果数 = 小明的苹果数 + 3 = 5 + 3 = 8个"
+                },
+                {
+                    id: 3,
+                    grade: "三年级",
+                    type: "choice",
+                    difficulty: "easy",
+                    content: "下列哪个数是偶数？ A. 3 B. 5 C. 8 D. 7",
+                    answer: "C",
+                    explanation: "偶数是能被2整除的数，8 ÷ 2 = 4，没有余数，所以8是偶数"
+                },
+                {
+                    id: 4,
+                    grade: "四年级",
+                    type: "fill",
+                    difficulty: "hard",
+                    content: "一个长方形的长是8厘米，宽是5厘米，它的面积是____平方厘米。",
+                    answer: "40",
+                    explanation: "长方形面积 = 长 × 宽 = 8 × 5 = 40平方厘米"
+                },
+                {
+                    id: 5,
+                    grade: "五年级",
+                    type: "calculation",
+                    difficulty: "medium",
+                    content: "12.5 × 4 = ?",
+                    answer: "50",
+                    explanation: "12.5 × 4 = (10 + 2.5) × 4 = 10 × 4 + 2.5 × 4 = 40 + 10 = 50"
+                },
+                {
+                    id: 6,
+                    grade: "六年级",
+                    type: "word",
+                    difficulty: "hard",
+                    content: "一辆汽车以每小时60公里的速度行驶，3小时可以行驶多少公里？",
+                    answer: "180公里",
+                    explanation: "路程 = 速度 × 时间 = 60公里/小时 × 3小时 = 180公里"
+                }
+            ],
+            
+            userStats: {} // 格式: { userId: { total: 0, correct: 0, wrongQuestions: [] } }
+        };
+        
+        // 当前应用状态
+        const appState = {
+            currentUser: null,
+            filteredQuestions: [],
+            currentPage: 1,
+            questionsPerPage: 3
+        };
+        
+        // DOM元素
+        const elements = {
+            loginBtn: document.getElementById('login-btn'),
+            registerBtn: document.getElementById('register-btn'),
+            logoutBtn: document.getElementById('logout-btn'),
+            loginModal: document.getElementById('login-modal'),
+            registerModal: document.getElementById('register-modal'),
+            loginForm: document.getElementById('login-form'),
+            registerForm: document.getElementById('register-form'),
+            filterForm: document.getElementById('filter-form'),
+            questionList: document.getElementById('question-list'),
+            userInfo: document.getElementById('user-info'),
+            usernameDisplay: document.getElementById('username-display'),
+            totalQuestions: document.getElementById('total-questions'),
+            correctAnswers: document.getElementById('correct-answers'),
+            accuracyRate: document.getElementById('accuracy-rate'),
+            wrongQuestionsContainer: document.getElementById('wrong-questions-container')
+        };
+        
+        // 关闭模态框的函数
+        function closeModal(modal) {
+            modal.style.display = 'none';
+        }
+        
+        // 显示模态框的函数
+        function showModal(modal) {
+            modal.style.display = 'flex';
+        }
+        
+        // 初始化事件监听
+        function initEventListeners() {
+            // 登录按钮点击
+            elements.loginBtn.addEventListener('click', () => showModal(elements.loginModal));
+            
+            // 注册按钮点击
+            elements.registerBtn.addEventListener('click', () => showModal(elements.registerModal));
+            
+            // 退出按钮点击
+            elements.logoutBtn.addEventListener('click', logout);
+            
+            // 关闭按钮点击
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    closeModal(this.closest('.modal'));
+                });
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    closeModal(e.target);
+                }
+            });
+            
+            // 登录表单提交
+            elements.loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                login(username, password);
+            });
+            
+            // 注册表单提交
+            elements.registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致！');
+                    return;
+                }
+                
+                register(username, password);
+            });
+            
+            // 筛选表单提交
+            elements.filterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                filterQuestions();
+            });
+        }
+        
+        // 用户登录
+        function login(username, password) {
+            const user = database.users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                appState.currentUser = user;
+                updateUIAfterLogin();
+                closeModal(elements.loginModal);
+                alert('登录成功！');
+                
+                // 初始化用户统计信息（如果不存在）
+                if (!database.userStats[user.id]) {
+                    database.userStats[user.id] = {
+                        total: 0,
+                        correct: 0,
+                        wrongQuestions: []
+                    };
+                }
+                
+                updateUserStats();
+                renderWrongQuestions();
+            } else {
+                alert('用户名或密码错误！');
+            }
+        }
+        
+        // 用户注册
+        function register(username, password) {
+            // 检查用户名是否已存在
+            const userExists = database.users.some(u => u.username === username);
+            
+            if (userExists) {
+                alert('用户名已存在！');
+                return;
+            }
+            
+            // 创建新用户
+            const newUser = {
+                id: database.users.length + 1,
+                username,
+                password
+            };
+            
+            database.users.push(newUser);
+            alert('注册成功！请登录。');
+            closeModal(elements.registerModal);
+            showModal(elements.loginModal);
+            
+            // 自动填充登录表单
+            document.getElementById('login-username').value = username;
+            document.getElementById('login-password').value = password;
+        }
+        
+        // 用户退出
+        function logout() {
+            appState.currentUser = null;
+            updateUIAfterLogout();
+            alert('您已退出登录。');
+        }
+        
+        // 登录后更新UI
+        function updateUIAfterLogin() {
+            elements.loginBtn.style.display = 'none';
+            elements.registerBtn.style.display = 'none';
+            elements.logoutBtn.style.display = 'inline-block';
+            elements.userInfo.style.display = 'block';
+            elements.usernameDisplay.textContent = appState.currentUser.username;
+        }
+        
+        // 退出后更新UI
+        function updateUIAfterLogout() {
+            elements.loginBtn.style.display = 'inline-block';
+            elements.registerBtn.style.display = 'inline-block';
+            elements.logoutBtn.style.display = 'none';
+            elements.userInfo.style.display = 'none';
+        }
+        
+        // 筛选题目
+        function filterQuestions() {
+            const grade = document.getElementById('grade').value;
+            const type = document.getElementById('type').value;
+            const difficulty = document.getElementById('difficulty').value;
+            
+            appState.filteredQuestions = database.questions.filter(q => {
+                return (!grade || q.grade.includes(grade)) && 
+                       (!type || q.type === type) && 
+                       (!difficulty || q.difficulty === difficulty);
+            });
+            
+            appState.currentPage = 1;
+            renderQuestions();
+            renderPagination();
+        }
+        
+        // 渲染题目列表
+        function renderQuestions() {
+            const questionsToRender = appState.filteredQuestions.length > 0 
+                ? appState.filteredQuestions 
+                : database.questions;
+                
+            const start = (appState.currentPage - 1) * appState.questionsPerPage;
+            const end = start + appState.questionsPerPage;
+            const paginatedQuestions = questionsToRender.slice(start, end);
+            
+            elements.questionList.innerHTML = '';
+            
+            paginatedQuestions.forEach(q => {
+                const difficultyClass = q.difficulty === 'easy' ? 'easy' : 
+                                      q.difficulty === 'medium' ? 'medium' : 'hard';
+                const difficultyText = q.difficulty === 'easy' ? '简单' : 
+                                      q.difficulty === 'medium' ? '中等' : '困难';
+                const typeText = q.type === 'choice' ? '选择题' : 
+                                q.type === 'fill' ? '填空题' : 
+                                q.type === 'calculation' ? '计算题' : '应用题';
+                
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question';
+                questionElement.dataset.questionId = q.id;
+                
+                // 选择题的选项处理
+                let answerInput = '';
+                if (q.type === 'choice') {
+                    const options = q.content.split('A.')[1].split('B.')[0] ? 
+                        q.content.split('A.')[1].split(' B.') : [];
+                    
+                    answerInput = `
+                        <div class="answer-options">
+                            ${options.map((opt, i) => `
+                                <label>
+                                    <input type="radio" name="answer-${q.id}" value="${String.fromCharCode(65 + i)}">
+                                    ${String.fromCharCode(65 + i)}. ${opt}
+                                </label><br>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    answerInput = `<input type="text" class="user-answer" id="answer-${q.id}" placeholder="请输入答案">`;
+                }
+                
+                questionElement.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-meta">
+                            <span class="grade">${q.grade}</span>
+                            <span class="type">${typeText}</span>
+                            <span class="difficulty ${difficultyClass}">${difficultyText}</span>
+                        </div>
+                    </div>
+                    <div class="question-content">
+                        ${q.type === 'choice' ? q.content.split('A.')[0] : q.content}
+                    </div>
+                    <div class="answer-section">
+                        ${answerInput}
+                        <button class="submit-answer" data-question-id="${q.id}">提交答案</button>
+                        <div class="result" id="result-${q.id}"></div>
+                    </div>
+                `;
+                
+                elements.questionList.appendChild(questionElement);
+            });
+            
+            // 添加提交答案的事件监听
+            document.querySelectorAll('.submit-answer').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const questionId = parseInt(this.dataset.questionId);
+                    submitAnswer(questionId);
+                });
+            });
+        }
+        
+        // 提交答案
+        function submitAnswer(questionId) {
+            if (!appState.currentUser) {
+                alert('请先登录再提交答案！');
+                showModal(elements.loginModal);
+                return;
+            }
+            
+            const question = database.questions.find(q => q.id === questionId);
+            let userAnswer = '';
+            
+            if (question.type === 'choice') {
+                const selectedOption = document.querySelector(`input[name="answer-${questionId}"]:checked`);
+                if (!selectedOption) {
+                    alert('请选择一个答案！');
+                    return;
+                }
+                userAnswer = selectedOption.value;
+            } else {
+                userAnswer = document.getElementById(`answer-${questionId}`).value.trim();
+            }
+            
+            // 标准化答案比较（忽略大小写和单位）
+            const normalizedUserAnswer = userAnswer.toLowerCase().replace(/个|公里|平方厘米|厘米/g, '');
+            const normalizedCorrectAnswer = question.answer.toLowerCase().replace(/个|公里|平方厘米|厘米/g, '');
+            
+            const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+            const resultElement = document.getElementById(`result-${questionId}`);
+            
+            // 更新用户统计信息
+            const userId = appState.currentUser.id;
+            database.userStats[userId].total += 1;
+            
+            if (isCorrect) {
+                database.userStats[userId].correct += 1;
+                resultElement.className = 'result correct';
+                resultElement.innerHTML = `
+                    <span>✓ 回答正确！</span>
+                    ${question.explanation ? `<p>解析: ${question.explanation}</p>` : ''}
+                `;
+            } else {
+                resultElement.className = 'result incorrect';
+                resultElement.innerHTML = `
+                    <span>✗ 回答错误！</span>
+                    <p>正确答案: <span class="correct-answer">${question.answer}</span></p>
+                    ${question.explanation ? `<p>解析: ${question.explanation}</p>` : ''}
+                `;
+                
+                // 添加到错题本（如果还没有）
+                const alreadyInWrongList = database.userStats[userId].wrongQuestions.some(
+                    wq => wq.questionId === questionId
+                );
+                
+                if (!alreadyInWrongList) {
+                    database.userStats[userId].wrongQuestions.push({
+                        questionId,
+                        userAnswer,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            }
+            
+            // 更新统计信息显示
+            updateUserStats();
+            renderWrongQuestions();
+        }
+        
+        // 更新用户统计信息显示
+        function updateUserStats() {
+            if (!appState.currentUser) return;
+            
+            const userId = appState.currentUser.id;
+            const stats = database.userStats[userId] || { total: 0, correct: 0 };
+            
+            elements.totalQuestions.textContent = stats.total;
+            elements.correctAnswers.textContent = stats.correct;
+            
+            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+            elements.accuracyRate.textContent = `${accuracy}%`;
+        }
+        
+        // 渲染错题本
+        function renderWrongQuestions() {
+            if (!appState.currentUser) {
+                elements.wrongQuestionsContainer.innerHTML = '<p>请登录查看错题本</p>';
+                return;
+            }
+            
+            const userId = appState.currentUser.id;
+            const wrongQuestions = database.userStats[userId]?.wrongQuestions || [];
+            
+            if (wrongQuestions.length === 0) {
+                elements.wrongQuestionsContainer.innerHTML = '<p>暂无错题</p>';
+                return;
+            }
+            
+            elements.wrongQuestionsContainer.innerHTML = '';
+            
+            wrongQuestions.forEach(wq => {
+                const question = database.questions.find(q => q.id === wq.questionId);
+                if (!question) return;
+                
+                const wrongQuestionElement = document.createElement('div');
+                wrongQuestionElement.className = 'wrong-question';
+                wrongQuestionElement.innerHTML = `
+                    <p>${question.content}</p>
+                    <small>你的答案: ${wq.userAnswer || '未回答'} | 正确答案: ${question.answer}</small>
+                `;
+                
+                wrongQuestionElement.addEventListener('click', () => {
+                    // 滚动到对应题目
+                    const questionElement = document.querySelector(`.question[data-question-id="${question.id}"]`);
+                    if (questionElement) {
+                        questionElement.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        // 如果题目不在当前筛选结果中，重置筛选并跳转到题目
+                        appState.filteredQuestions = [];
+                        appState.currentPage = Math.ceil(database.questions.findIndex(q => q.id === question.id) / appState.questionsPerPage);
+                        renderQuestions();
+                        
+                        setTimeout(() => {
+                            const questionElement = document.querySelector(`.question[data-question-id="${question.id}"]`);
+                            if (questionElement) {
+                                questionElement.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }, 100);
+                    }
+                });
+                
+                elements.wrongQuestionsContainer.appendChild(wrongQuestionElement);
+            });
+        }
+        
+        // 渲染分页
+        function renderPagination() {
+            // 简化版分页，实际应用中需要更复杂的分页逻辑
+            // 这里只是演示，实际应该根据题目数量动态生成分页
+        }
+        
+        // 初始化应用
+        function initApp() {
+            initEventListeners();
+            renderQuestions();
+            renderPagination();
+            
+            // 检查是否有登录状态（实际应用中应该从cookie/localStorage检查）
+            // 这里只是演示，默认未登录
+            updateUIAfterLogout();
+        }
+        
+        // 启动应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
